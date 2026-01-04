@@ -1,0 +1,23 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const ProductController_1 = require("../controllers/ProductController");
+const auth_1 = require("../middlewares/auth");
+const validation_1 = require("../middlewares/validation");
+const upload_1 = require("../utils/upload");
+const product_1 = require("../validators/product");
+const router = (0, express_1.Router)();
+router.get("/", auth_1.optionalAuth, product_1.productQueryValidation, validation_1.handleValidationErrors, ProductController_1.ProductController.getAllProducts);
+router.get("/featured", auth_1.optionalAuth, ProductController_1.ProductController.getFeaturedProducts);
+router.get("/search", auth_1.optionalAuth, ProductController_1.ProductController.searchProducts);
+router.get("/slug/:slug", auth_1.optionalAuth, ProductController_1.ProductController.getProductBySlug);
+router.get("/:id", auth_1.optionalAuth, product_1.productIdValidation, validation_1.handleValidationErrors, ProductController_1.ProductController.getProductById);
+router.get("/:id/related", auth_1.optionalAuth, product_1.productIdValidation, validation_1.handleValidationErrors, ProductController_1.ProductController.getRelatedProducts);
+router.post("/", auth_1.authenticate, (0, auth_1.authorize)("admin"), (0, upload_1.uploadFields)([{ name: "mainImages", maxCount: 5 }]), product_1.createProductValidation, validation_1.handleValidationErrors, ProductController_1.ProductController.createProduct);
+router.put("/:id", (0, upload_1.uploadFields)([{ name: "mainImages", maxCount: 5 }]), product_1.updateProductValidation, validation_1.handleValidationErrors, ProductController_1.ProductController.updateProduct);
+router.delete("/:id", product_1.productIdValidation, validation_1.handleValidationErrors, ProductController_1.ProductController.deleteProduct);
+router.patch("/:id/toggle-status", product_1.productIdValidation, validation_1.handleValidationErrors, ProductController_1.ProductController.toggleProductStatus);
+router.patch("/:id/toggle-featured", product_1.productIdValidation, validation_1.handleValidationErrors, ProductController_1.ProductController.toggleFeaturedStatus);
+router.patch("/:id/stock", product_1.productIdValidation, validation_1.handleValidationErrors, ProductController_1.ProductController.updateStock);
+exports.default = router;
+//# sourceMappingURL=products.js.map

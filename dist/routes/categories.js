@@ -1,0 +1,20 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+const express_1 = require("express");
+const CategoryController_1 = require("../controllers/CategoryController");
+const auth_1 = require("../middlewares/auth");
+const validation_1 = require("../middlewares/validation");
+const upload_1 = require("../utils/upload");
+const category_1 = require("../validators/category");
+const router = (0, express_1.Router)();
+router.get("/", auth_1.optionalAuth, CategoryController_1.CategoryController.getAllCategories);
+router.get("/tree", auth_1.optionalAuth, CategoryController_1.CategoryController.getCategoryTree);
+router.get("/slug/:slug", auth_1.optionalAuth, CategoryController_1.CategoryController.getCategoryBySlug);
+router.get("/:id", auth_1.optionalAuth, category_1.categoryIdValidation, validation_1.handleValidationErrors, CategoryController_1.CategoryController.getCategoryById);
+router.use(auth_1.authenticate, (0, auth_1.authorize)("admin"));
+router.post("/", (0, upload_1.uploadSingle)("image"), category_1.createCategoryValidation, validation_1.handleValidationErrors, CategoryController_1.CategoryController.createCategory);
+router.put("/:id", (0, upload_1.uploadSingle)("image"), category_1.updateCategoryValidation, validation_1.handleValidationErrors, CategoryController_1.CategoryController.updateCategory);
+router.delete("/:id", category_1.categoryIdValidation, validation_1.handleValidationErrors, CategoryController_1.CategoryController.deleteCategory);
+router.patch("/:id/toggle-status", category_1.categoryIdValidation, validation_1.handleValidationErrors, CategoryController_1.CategoryController.toggleCategoryStatus);
+exports.default = router;
+//# sourceMappingURL=categories.js.map
